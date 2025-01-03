@@ -1,4 +1,4 @@
-#!/usr/bin/with-contenv bash
+#!/bin/bash
 
 if $youtubedl_debug; then youtubedl_args_verbose=true; else youtubedl_args_verbose=false; fi
 if grep -qPe '^(--output |-o ).*\$\(' '/config/args.conf'; then youtubedl_args_output_expand=true; else youtubedl_args_output_expand=false; fi
@@ -40,7 +40,7 @@ do
     grep -m 1 -nPe '\|' '/tmp/urls.temp' > '/tmp/urls'
     sed -i -E "$(grep -oPe '^[0-9]+' /tmp/urls)d" '/tmp/urls.temp'
     extra_url_args="$(grep -oPe '.*?\|\K.*' '/tmp/urls')"
-    sed -i -E 's!([0-9]*:)?(.*?)(\|.*)!\2!' '/tmp/urls'
+    sed -i -E 's!([0-9]*:)(.*) (\|.*)!\2!' '/tmp/urls'
   else
     mv '/tmp/urls.temp' '/tmp/urls'
   fi
@@ -72,5 +72,6 @@ then
   sleep $youtubedl_interval
 else
   echo "youtubedl_interval is set to 'false', container will now exit."
-  s6-svscanctl -t '/var/run/s6/services'
+  supervisorctl stop all
+  supervisorctl start terminate
 fi
