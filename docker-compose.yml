@@ -1,0 +1,14 @@
+services:
+  yt:
+    image: yt
+    restart: always
+    container_name: yt
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./root/app/webserver/templates:/app/webserver/templates
+    environment:
+      - youtubedl_webui=true
+    ports:
+      - "8080:8080"
